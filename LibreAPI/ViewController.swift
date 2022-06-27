@@ -1,14 +1,15 @@
 import Cocoa
 import SnapKit
 import Alamofire
+import SwiftyJSON
+let httpRequestMethods = [
+    "GET",
+    "POST",
+    "PUT",
+    "DELETE"
+]
 
 class ViewController: NSViewController {
-    let httpRequestMethods = [
-        "GET",
-        "POST",
-        "PUT",
-        "DELETE"
-    ]
     
     let stackView = NSStackView()
     let httpMethodPicker = NSPopUpButton()
@@ -27,7 +28,7 @@ class ViewController: NSViewController {
         
         return String(decoding: jsonData, as: UTF8.self)
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -58,20 +59,72 @@ class ViewController: NSViewController {
             make.bottom.equalTo(view.snp.bottom).offset(-20)
         }
     }
-
+    
     override var representedObject: Any? {
         didSet {
-        // Update the view, if already loaded.
+            // Update the view, if already loaded.
         }
     }
     
-    @objc func sendRequest(){
+    func sendGetRequest() {
         AF.request(urlTextField.stringValue, method: .get).response { [self] response in
-            guard let data = response.data else {
-                return
+            switch response.result {
+            case .success(let value):
+                guard let data  = value else {
+                    return
+                }
+                jsonView.string = prettyJsonString(data: data)
+                break
+                
+            case .failure(let error):
+                print(error)
+                break
             }
-            
-            jsonView.string = prettyJsonString(data: data)
+        }
+    }
+    
+    func sendPostRequest() {
+        let dict: [String: Any?] = [
+            "id": 5,
+            "name": "eee"
+        ]
+        let json = JSON(dict)
+        AF.request(urlTextField.stringValue, method: .post, parameters: json, encoder: JSONParameterEncoder.default).response { [self] response in
+            switch response.result {
+            case .success(let value):
+                guard let data = value else { return }
+                jsonView.string = prettyJsonString(data: data)
+                break
+            case .failure(let error):
+                print(error)
+                break
+            }
+        }
+    }
+    
+    func sendPutRequest() {
+        
+    }
+    
+    func sendDeleteRequest() {
+        
+    }
+    
+    @objc func sendRequest(){
+        if httpMethodPicker.title == "GET" {
+           sendGetRequest()
+        }
+        
+        if httpMethodPicker.title == "POST" {
+            sendPostRequest()
+        }
+        
+        if httpMethodPicker.title == "PUT" {
+            sendPutRequest()
+        }
+        
+        if httpMethodPicker.title == "DELETE" {
+            sendDeleteRequest()
         }
     }
 }
