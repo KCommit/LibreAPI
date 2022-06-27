@@ -14,6 +14,19 @@ class ViewController: NSViewController {
     let httpMethodPicker = NSPopUpButton()
     let urlTextField = NSTextField()
     let sendRequestButton = NSButton()
+    let jsonView = NSTextView()
+    
+    func prettyJsonString(data: Data) -> String {
+        guard let jsonObject = try? JSONSerialization.jsonObject(with: data) else {
+            return ""
+        }
+        
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted) else {
+            return ""
+        }
+        
+        return String(decoding: jsonData, as: UTF8.self)
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,12 +42,21 @@ class ViewController: NSViewController {
         stackView.addArrangedSubview(httpMethodPicker)
         
         urlTextField.maximumNumberOfLines = 1
+        urlTextField.cell?.usesSingleLineMode = true
         stackView.addArrangedSubview(urlTextField)
         
         sendRequestButton.title = "Send"
         sendRequestButton.bezelStyle = .rounded
         sendRequestButton.action = #selector(sendRequest)
         stackView.addArrangedSubview(sendRequestButton)
+        
+        view.addSubview(jsonView)
+        jsonView.snp.makeConstraints { make in
+            make.left.equalTo(stackView.snp.left)
+            make.right.equalTo(stackView.snp.right)
+            make.top.equalTo(stackView.snp.bottom).offset(20)
+            make.bottom.equalTo(view.snp.bottom).offset(-20)
+        }
     }
 
     override var representedObject: Any? {
@@ -44,23 +66,13 @@ class ViewController: NSViewController {
     }
     
     @objc func sendRequest(){
-        AF.request(urlTextField.stringValue, method: .get).response { response in
+        AF.request(urlTextField.stringValue, method: .get).response { [self] response in
             guard let data = response.data else {
                 return
             }
             
-            guard let jsonObject = try? JSONSerialization.jsonObject(with: data) else {
-                return
-            }
-            
-            guard let jsonData = try? JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted) else {
-                return
-            }
-            
-            print(String(decoding: jsonData, as: UTF8.self))
+            jsonView.string = prettyJsonString(data: data)
         }
     }
-
-
 }
 
