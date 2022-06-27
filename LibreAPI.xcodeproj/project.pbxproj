@@ -116,6 +116,7 @@
 			packageReferences = (
 				60C6BC8F286946850008B67B /* XCRemoteSwiftPackageReference "SnapKit" */,
 				603DAF09286969800044E893 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				6007E320286A683900066598 /* XCRemoteSwiftPackageReference "SwiftyJSON" */,
 			);
 			productRefGroup = 60BB722E28694231004EEF3F /* Products */;
 			projectDirPath = "";
@@ -355,6 +356,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		6007E320286A683900066598 /* XCRemoteSwiftPackageReference "SwiftyJSON" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftyJSON/SwiftyJSON.git";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
 		603DAF09286969800044E893 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
