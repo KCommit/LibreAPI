@@ -1,9 +1,13 @@
 import Cocoa
 import SnapKit
+import Alamofire
 
 class ViewController: NSViewController {
     let httpRequestMethods = [
-        "GET"
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
     ]
     
     let stackView = NSStackView()
@@ -29,12 +33,31 @@ class ViewController: NSViewController {
         
         sendRequestButton.title = "Send"
         sendRequestButton.bezelStyle = .rounded
+        sendRequestButton.action = #selector(sendRequest)
         stackView.addArrangedSubview(sendRequestButton)
     }
 
     override var representedObject: Any? {
         didSet {
         // Update the view, if already loaded.
+        }
+    }
+    
+    @objc func sendRequest(){
+        AF.request(urlTextField.stringValue, method: .get).response { response in
+            guard let data = response.data else {
+                return
+            }
+            
+            guard let jsonObject = try? JSONSerialization.jsonObject(with: data) else {
+                return
+            }
+            
+            guard let jsonData = try? JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted) else {
+                return
+            }
+            
+            print(String(decoding: jsonData, as: UTF8.self))
         }
     }
 
