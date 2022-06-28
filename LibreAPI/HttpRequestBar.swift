@@ -8,13 +8,22 @@
 import Cocoa
 import SnapKit
 
+protocol HttpRequestBarDelegate {
+    func sendButtonAction(httpMethodPicker: NSPopUpButton, urlTextField: NSTextField, sendRequestButton: NSButton)
+}
+
 class HttpRequestBar: NSView {
+    let httpRequestMethods = [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+    ]
     let stackView = NSStackView()
     let httpMethodPicker = NSPopUpButton()
     let urlTextField = NSTextField()
     let sendRequestButton = NSButton()
-
-
+    var delegate: HttpRequestBarDelegate?
     override func draw(_ dirtyRect: NSRect) {
         addSubview(stackView)
         stackView.snp.makeConstraints { make in
@@ -31,5 +40,14 @@ class HttpRequestBar: NSView {
         sendRequestButton.title = "Send"
         sendRequestButton.bezelStyle = .rounded
         stackView.addArrangedSubview(sendRequestButton)
+    }
+    
+    
+    @objc func sendAction() {
+        guard let delegate = delegate else {
+            return
+        }
+        
+        delegate.sendButtonAction(httpMethodPicker: httpMethodPicker, urlTextField: urlTextField, sendRequestButton: sendRequestButton)
     }
 }
