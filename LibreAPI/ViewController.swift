@@ -2,6 +2,7 @@ import Cocoa
 import SnapKit
 import Alamofire
 import SwiftyJSON
+
 let httpRequestMethods = [
     "GET",
     "POST",
